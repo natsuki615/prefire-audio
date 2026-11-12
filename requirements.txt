@@ -1,0 +1,3 @@
+earthaccess
+h5py
+numpy

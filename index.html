@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PREFIRE Spectral Player</title>
+  <link rel="stylesheet" href="player/style.css">
+</head>
+<body>
+  <header>
+    <div class="title">
+      <h1>PREFIRE <span>spectral player</span></h1>
+      <p id="source">loading…</p>
+    </div>
+    <div class="file-actions">
+      <a class="button ghost" href="player/guide.html">What am I hearing?</a>
+      <label class="ghost button">Load track.json<input id="fileInput" type="file" accept=".json" hidden></label>
+    </div>
+  </header>
+
+  <main>
+    <section class="viz">
+      <div class="panel spectrum-wrap">
+        <canvas id="spectrum"></canvas>
+      </div>
+      <div class="panel cascade-wrap">
+        <canvas id="cascade"></canvas>
+        <div id="hover" class="hover" hidden></div>
+        <div class="axis-note">short → long wavelength</div>
+      </div>
+    </section>
+
+    <aside>
+      <div class="panel map-wrap">
+        <canvas id="map"></canvas>
+      </div>
+
+      <dl class="panel readouts">
+        <div><dt>UTC</dt><dd id="rTime">–</dd></div>
+        <div><dt>Lat / Lon</dt><dd id="rPos">–</dd></div>
+        <div><dt>Window BT (10–12 µm)</dt><dd id="rBT">–</dd></div>
+        <div><dt>Surface</dt><dd id="rSurf">–</dd></div>
+        <div><dt>Frame</dt><dd id="rFrame">–</dd></div>
+      </dl>
+
+      <div class="panel controls">
+        <label>Sound
+          <select id="mode">
+            <option value="chorus">Spectral chorus(63 sines)</option>
+            <option value="harmonic">Harmonic series(Earth's timbre)</option>
+            <option value="pluck">Pentatonic notes</option>
+          </select>
+        </label>
+        <label>Values
+          <select id="norm">
+            <option value="relative">Relative(to each channel's own range)</option>
+            <option value="anomaly">Anomaly(last ~30 ticks)</option>
+            <option value="spectrum">Absolute</option>
+          </select>
+        </label>
+        <label>Low-confidence channels
+          <select id="lowConf">
+            <option value="quiet">Quiet(faded)</option>
+            <option value="full">Full</option>
+            <option value="mute">Mute</option>
+          </select>
+        </label>
+        <label>Cross-track scene
+          <select id="scene"></select>
+        </label>
+        <label><span>Tick rate <output id="rateOut">8</output>/s</span>
+          <input id="rate" type="range" min="1" max="40" value="8">
+        </label>
+        <label><span>Pitch range <output id="pitchOut"></output> <small>(chorus)</small></span>
+          <span class="pair">
+            <input id="fLow" type="range" min="40" max="400" value="90">
+            <input id="fHigh" type="range" min="500" max="6000" value="2400">
+          </span>
+        </label>
+        <label>Volume
+          <input id="vol" type="range" min="0" max="100" value="60">
+        </label>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="transport">
+    <button id="playBtn" class="play" aria-label="Play">▶</button>
+    <input id="scrub" type="range" min="0" max="0" value="0">
+    <span id="tOut" class="mono">0 / 0</span>
+  </footer>
+
+  <script src="player/model.js"></script>
+  <script src="player/app.js"></script>
+</body>
+</html>

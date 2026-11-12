@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What am I hearing? PREFIRE Spectral Player</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body.guide { display: block; height: auto; }
+    .guide-main { max-width: 1040px; margin: 0 auto; padding: 8px 24px 64px; }
+    .guide-main h2 { font-size: 17px; margin: 40px 0 6px; }
+    .guide-main p { color: #c3c2b7; max-width: 720px; margin: 6px 0; }
+    .guide-main p strong { color: var(--text); }
+    .lede { font-size: 15px; }
+    .chart { position: relative; margin-top: 14px; padding: 12px 14px 8px; }
+    .chart svg { display: block; width: 100%; overflow: visible; }
+    .chart-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .chart-title h3 { margin: 0; font-size: 13px; font-weight: 600; }
+    .chart-title span { color: var(--muted); font-size: 12px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 10px 0 2px; }
+    .legend button { display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px 4px 8px; font-size: 12px; }
+    .swatch { width: 14px; height: 3px; border-radius: 2px; }
+    .play-mini { color: var(--accent); font-size: 10px; }
+    .tip {
+      position: absolute; pointer-events: none; z-index: 2; padding: 7px 9px;
+      background: rgba(10, 11, 15, 0.95); border: 1px solid var(--line); border-radius: 6px;
+      font-size: 12px; line-height: 1.5; white-space: nowrap;
+    }
+    .tip b { font-weight: 600; }
+    .tip .k { color: var(--muted); }
+    .tip .row { display: flex; align-items: center; gap: 6px; }
+    .tip .num { margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 12px; }
+    .card { padding: 10px 12px; }
+    .card h4 { margin: 0 0 4px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    .card p { font-size: 12.5px; margin: 0; }
+    .card .hz { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 12.5px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 500; }
+    td:first-child { color: var(--text); white-space: nowrap; }
+    td { color: #c3c2b7; }
+    details { margin-top: 8px; color: var(--muted); font-size: 12px; }
+    details table { font-variant-numeric: tabular-nums; }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body class="guide">
+  <header>
+    <div class="title">
+      <h1>What am I hearing? <span>PREFIRE spectral player</span></h1>
+      <p>Examples come from the same model that drives the demo orbit. Press ▶ to hear any of them.</p>
+    </div>
+    <a class="button ghost" href="../index.html">← Back to player</a>
+  </header>
+
+  <div class="guide-main">
+    <p class="lede">
+      Everything on Earth glows in infrared heat. PREFIRE splits that glow into <strong>63 channels</strong>, like 63 very
+      narrow colours from 1 to 53 µm. Each channel effectively reports <strong>the temperature of whatever it can see</strong>.
+      Some wavelengths pass straight through the air and see the ground. Others are absorbed by CO₂ or water vapour, so all
+      they see is cold air high up. The player gives each channel its own tone. A <strong>warmer</strong> view makes the
+      tone <strong>louder</strong>.
+    </p>
+
+    <h2>1. One tick, decoded</h2>
+    <p>
+      This is a single tick from over a clear tropical ocean. Read it left to right. The ground is about 300 K, but some
+      channels report far colder, because something in the air blocks their view of the surface.
+    </p>
+    <div class="panel chart" id="tickChart">
+      <div class="chart-title">
+        <h3>What each channel sees for a clear tropical ocean during daytime</h3>
+        <button id="playTick"><span class="play-mini">▶</span> Hear this tick</button>
+      </div>
+      <svg></svg>
+    </div>
+    <div class="cards" id="bandCards"></div>
+
+    <h2>2. Same instrument, different places</h2>
+    <p>
+      The shape of the spectrum changes with what's below. Listen for <strong>which part of the chord drops out</strong>.
+      Clouds quieten the window channels. Dry polar air lets the far-infrared channels see down to the surface, which is
+      exactly what PREFIRE was launched to measure.
+    </p>
+    <div class="panel chart" id="placesChart">
+      <div class="chart-title">
+        <h3>Temperature seen per channel, four scenes</h3>
+      </div>
+      <div class="legend" id="placesLegend"></div>
+      <svg></svg>
+      <details>
+        <summary>Table view</summary>
+        <table id="placesTable"></table>
+      </details>
+    </div>
+    <div class="cards" id="placeCards"></div>
+
+    <h2>3. Wavelength → pitch</h2>
+    <p>
+      In <strong>Spectral chorus</strong> mode, shorter wavelengths play higher. Each dot below is one channel at its
+      pitch (default range 90–2400 Hz). <span id="farIrCount"></span>
+    </p>
+    <div class="panel chart" id="pitchChart">
+      <div class="chart-title"><h3>Where each channel sits in pitch</h3><span>chorus mode, default range</span></div>
+      <svg></svg>
+    </div>
+    <table>
+      <thead><tr><th>Sound mode</th><th>One channel becomes…</th><th>Listen for</th></tr></thead>
+      <tbody>
+        <tr><td>Spectral chorus</td><td>A steady sine tone at a fixed pitch (above). Its volume follows the channel.</td>
+          <td>Chords thinning or filling in. Over cloud, the middle register (window, ~280–400 Hz) fades while the bass holds. At the poles, the whole chord goes quiet.</td></tr>
+        <tr><td>Harmonic series</td><td>One overtone of a single note. The longest wavelength is the fundamental.</td>
+          <td>Timbre, not melody. The root note rises as the scene warms (window temperature), and the tone colour changes with the spectrum's shape.</td></tr>
+        <tr><td>Pentatonic plucks</td><td>A note that only sounds when the channel changes quickly.</td>
+          <td>Edges: coastlines, cloud boundaries, the ice edge. A high pluck means warming; a lower, softer one means cooling. Silence means nothing is changing.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>4. Reading the cascade over one orbit</h2>
+    <p>
+      This is the whole demo orbit (about 95 minutes) on one screen. It's the player's cascade turned on its side, with
+      time running left to right. The top line is the window temperature, which roughly tracks the surface. Below it,
+      each row is a channel, with the highest pitch at the top, and brightness shows how warm that channel is compared
+      with the rest of the orbit.
+    </p>
+    <div class="panel chart" id="orbitChart">
+      <div class="chart-title"><h3>Window temperature and all 63 channels of the Demo orbit</h3><span>click anywhere to hear that moment</span></div>
+      <svg></svg>
+    </div>
+    <p class="hint">
+      Things to spot: whole columns go dark at the poles (everything is cold). In the tropics, dark streaks appear only
+      in the middle rows; those are cloud tops blocking the window. The CO₂ rows (around 15 µm) change slowly and smoothly, because
+      they see the upper air, not the clouds. They're the slow drift under everything. The Sunlight rows switch off on the night
+      side, and the thin dark line through the far-infrared is a masked detector, which stays silent.
+    </p>
+  </div>
+
+  <script src="model.js"></script>
+  <script src="guide.js"></script>
+</body>
+</html>

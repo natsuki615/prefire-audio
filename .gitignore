@@ -1,0 +1,4 @@
+# raw PREFIRE granules (hundreds of MB); regenerate player/data/track.json with prepare_data.py
+/data/
+.DS_Store
+__pycache__/
